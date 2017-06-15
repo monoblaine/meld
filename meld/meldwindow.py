@@ -211,6 +211,8 @@ class MeldWindow(gnomeglade.Component):
         accels.connect(keyval, mask, 0, self.on_menu_edit_up_activate)
         (keyval, mask) = Gtk.accelerator_parse("F5")
         accels.connect(keyval, mask, 0, self.on_menu_refresh_activate)
+        (keyval, mask) = Gtk.accelerator_parse("<Primary><shift>W")
+        accels.connect(keyval, mask, 0, self.toggle_word_wrap)
 
         # Initialise sensitivity for important actions
         self.actiongroup.get_action("Stop").set_sensitive(False)
@@ -493,6 +495,9 @@ class MeldWindow(gnomeglade.Component):
 
     def on_menu_refresh_activate(self, *extra):
         self.current_doc().on_refresh_activate()
+
+    def toggle_word_wrap(self, *extra):
+        settings.set_enum('wrap-mode', Gtk.WrapMode.NONE if settings.get_enum('wrap-mode') == Gtk.WrapMode.WORD else Gtk.WrapMode.WORD)
 
     def on_menu_find_activate(self, *extra):
         self.current_doc().on_find_activate()
