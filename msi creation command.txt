@@ -1,0 +1,1 @@
+python setup_win32.py bdist_msi
