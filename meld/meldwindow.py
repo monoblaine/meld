@@ -213,6 +213,8 @@ class MeldWindow(gnomeglade.Component):
         accels.connect(keyval, mask, 0, self.on_menu_refresh_activate)
         (keyval, mask) = Gtk.accelerator_parse("<Primary><shift>W")
         accels.connect(keyval, mask, 0, self.toggle_word_wrap)
+        (keyval, mask) = Gtk.accelerator_parse("Escape")
+        accels.connect(keyval, mask, 0, self.on_esc)
 
         # Initialise sensitivity for important actions
         self.actiongroup.get_action("Stop").set_sensitive(False)
@@ -498,6 +500,16 @@ class MeldWindow(gnomeglade.Component):
 
     def toggle_word_wrap(self, *extra):
         settings.set_enum('wrap-mode', Gtk.WrapMode.NONE if settings.get_enum('wrap-mode') == Gtk.WrapMode.WORD else Gtk.WrapMode.WORD)
+
+    def on_esc(self, *extra):
+        index = self.notebook.get_current_page()
+        page = self.notebook.get_nth_page(index).pyobject
+
+        if isinstance(page, filediff.FileDiff) and self.current_doc().findbar.widget.props.visible:
+            self.current_doc().findbar.hide()
+        else:
+            from meldapp import app
+            app.lookup_action('quit').activate(None)
 
     def on_menu_find_activate(self, *extra):
         self.current_doc().on_find_activate()
